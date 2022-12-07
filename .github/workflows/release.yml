@@ -17,21 +17,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Create Release Branch
-        run: git checkout -b release/${{ github.event.inputs.versionName }}
+        run: git checkout -b release/${{ github.event.inputs.version }}
       - name: Commit (for test)
         run: |
-          touch ${{ github.event.inputs.versionName }}.txt
-          git add ${{ github.event.inputs.versionName }}.txt
-          git commit --message "Add ${{ github.event.inputs.versionName }}.txt"
+          touch ${{ github.event.inputs.version }}.txt
+          git add ${{ github.event.inputs.version }}.txt
+          git commit --message "Add ${{ github.event.inputs.version }}.txt"
       - name: Push Release Branch
-        run: git push origin release/${{ github.event.inputs.versionName }}
+        run: git push origin release/${{ github.event.inputs.version }}
       - name: Create Pull Request Into master
         uses: peter-evans/create-pull-request@v4.2.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: release/${{ github.event.inputs.versionName }}
+          branch: release/${{ github.event.inputs.version }}
           base: master
-          title: 'Release/${{ github.event.inputs.versionName }} to master'
+          title: 'Release/${{ github.event.inputs.version }} to master'
           body: |
             Created by Github Actions
             $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
