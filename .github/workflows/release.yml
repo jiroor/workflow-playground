@@ -1,0 +1,53 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version. (e.g. v9.90.x)'
+        required: true
+
+env:
+  SERVICE_NAME: tv
+  AWS_REGION: ap-northeast-1
+  AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+  BUCKET_NAME: openrec-appdata
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  GITHUB_USER_NAME: ${{ secrets.OPENREC_ADMIN_USER_NAME }}
+  GITHUB_USER_EMAIL: ${{ secrets.OPENREC_ADMIN_USER_EMAIL }}
+  GITHUB_USER_TOKEN: ${{ secrets.OPENREC_ADMIN_PAT }}
+  COMMIT_HASH: ${{ github.sha }}
+  VERSION_TAG: ${{ github.event.inputs.version }}
+  MANIFEST_REPOSITORY: openrec/openrec-kubernetes
+  MANIFEST_REPOSITORY_BASE_BRANCH: master
+  TZ: 'Asia/Tokyo'
+
+jobs:
+  create-release-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create Release Branch
+        run: git checkout -b release/${{ github.event.inputs.versionName }}
+      - name: Commit (for test)
+        run: |
+          touch ${{ github.event.inputs.versionName }}.txt
+          git add ${{ github.event.inputs.versionName }}.txt
+          git commit --message "Add ${{ github.event.inputs.versionName }}.txt"
+      - name: Push Release Branch
+        run: git push origin release/${{ github.event.inputs.versionName }}
+      - name: Create Pull Request Into master
+        uses: peter-evans/create-pull-request@v4.2.3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release/${{ github.event.inputs.versionName }}
+          base: master
+          title: 'Release/${{ github.event.inputs.versionName }} to master'
+          body: |
+            Created by Github Actions
+            $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+            
+            ## Release
+            
+            need to merge after deployment on production.
