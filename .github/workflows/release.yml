@@ -30,13 +30,13 @@ jobs:
           git commit --message "Add $VERSION.txt"
       - name: Push release branch
         run: git push origin release/$VERSION
-      - name: Create pull request into ${{ env.BASE_BRANCH_NAME }}
+      - name: Create pull request into $BASE_BRANCH_NAME
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           committer: github-actions <noreply@github.com>
-          branch: release/${{ env.VERSION }}
-          title: 'Release/${{ env.VERSION }} to ${{ env.BASE_BRANCH_NAME }}.'
+          branch: release/$VERSION
+          title: 'Release/$VERSION to $BASE_BRANCH_NAME.'
           body: |
             Created by Github Actions
             $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
