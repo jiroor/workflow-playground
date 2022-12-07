@@ -35,7 +35,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           committer: github-actions <noreply@github.com>
-          base: ${{ env.BASE_BRANCH_NAME }}
           branch: release/${{ env.VERSION }}
           title: 'Release/${{ env.VERSION }} to ${{ env.BASE_BRANCH_NAME }}.'
           body: |
