@@ -29,7 +29,7 @@ jobs:
           git commit --message "Add $VERSION.txt"
       - name: Push Release Branch
         run: git push origin release/$VERSION
-      - name: Create Pull Request Into master
+      - name: Create Pull Request Into main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -37,8 +37,8 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
             --data "{
-              \"title\": \"Release/$VERSION to master.\",
+              \"title\": \"Release/$VERSION to main.\",
               \"body\": \"Created by Github Actions\n$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\n\n## Release\nneed to merge after deployment on production.\",
               \"head\": \"release/$VERSION\",
-              \"base\": \"master\"
+              \"base\": \"main\"
             }"
