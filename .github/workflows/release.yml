@@ -21,14 +21,14 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email noreply@github.com
       - name: Create Release Branch
-        run: git checkout -b release/${{ github.event.inputs.version }}
+        run: git checkout -b release/$VERSION
       - name: Commit (for test)
         run: |
-          touch ${{ github.event.inputs.version }}.txt
-          git add ${{ github.event.inputs.version }}.txt
-          git commit --message "Add ${{ github.event.inputs.version }}.txt"
+          touch $VERSION.txt
+          git add $VERSION.txt
+          git commit --message "Add $VERSION.txt"
       - name: Push Release Branch
-        run: git push origin release/${{ github.event.inputs.version }}
+        run: git push origin release/$VERSION
       - name: Create Pull Request Into master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,8 +37,8 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
             --data "{
-              \"title\": \"Release/${{ github.event.inputs.version }} to master.\",
+              \"title\": \"Release/$VERSION to master.\",
               \"body\": \"Created by Github Actions\n$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\n\n## Release\nneed to merge after deployment on production.\",
-              \"head\": \"release/${{ github.event.inputs.version }}\",
+              \"head\": \"release/$VERSION\",
               \"base\": \"master\"
             }"
