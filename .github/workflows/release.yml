@@ -8,6 +8,7 @@ on:
         required: true
 
 env:
+  BASE_BRANCH_NAME: main
   VERSION: ${{ github.event.inputs.version }}
 
 jobs:
@@ -20,16 +21,16 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email noreply@github.com
-      - name: Create Release Branch
+      - name: Create release branch
         run: git checkout -b release/$VERSION
       - name: Commit (for test)
         run: |
           touch $VERSION.txt
           git add $VERSION.txt
           git commit --message "Add $VERSION.txt"
-      - name: Push Release Branch
+      - name: Push release branch
         run: git push origin release/$VERSION
-      - name: Create Pull Request Into main
+      - name: Create pull request into $BASE_BRANCH_NAME
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -37,8 +38,8 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Content-Type: application/json" \
             --data "{
-              \"title\": \"Release/$VERSION to main.\",
+              \"title\": \"Release/$VERSION to $BASE_BRANCH_NAME.\",
               \"body\": \"Created by Github Actions\n$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\n\n## Release\nneed to merge after deployment on production.\",
               \"head\": \"release/$VERSION\",
-              \"base\": \"main\"
+              \"base\": \"$BASE_BRANCH_NAME\"
             }"
