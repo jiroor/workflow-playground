@@ -30,7 +30,7 @@ jobs:
           git commit --message "Add $VERSION.txt"
       - name: Push release branch
         run: git push origin release/$VERSION
-      - name: Create pull request into $BASE_BRANCH_NAME
+      - name: Create pull request into ${{ env.BASE_BRANCH_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
